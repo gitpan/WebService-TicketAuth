@@ -11,9 +11,9 @@ use strict;
 our $opt_version;
 our $opt_help;
 our $opt_man;
-our $opt_resource = 'http://localhost/Example/Service';
-our $opt_server   = 'http://localhost:8082';
-our $opt_authfile = "$ENV{HOME}/.webservice_auth";
+our $opt_resource       = 'http://localhost/Example/Service';
+our $opt_server         = 'http://localhost:8082';
+our $opt_authfile       = "$ENV{HOME}/.webservice_auth";
 
 # Handle commandline options
 Getopt::Long::Configure ('bundling', 'no_ignore_case');

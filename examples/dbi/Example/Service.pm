@@ -1,12 +1,13 @@
 
 package Example::Service;
-@Example::Service::ISA = qw(Example::TicketAuth);
 
+use lib '.';
 use strict;
+use vars qw($VERSION %FIELDS);
 use Example::TicketAuth;
 
-use vars qw($VERSION %FIELDS);
-our $VERSION = '1.00';
+@Example::Service::ISA = qw(Example::TicketAuth);
+our $VERSION = '1.01';
 
 sub new {
     my ($this) = @_;
@@ -28,7 +29,14 @@ sub protected {
     my $self = shift;
     my $header = pop;
 
-    my $username = $self->get_username($header);
+#    my $username = $auth->get_username($header);
+    my $username = 'none';
 
     return "This is a protected routine, but '$username' is authorized to use it.\n";
 }
+
+sub login {
+    my $self = shift;
+    return $self->SUPER::login(@_);
+}
+1;

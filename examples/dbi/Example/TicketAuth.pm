@@ -1,18 +1,29 @@
 
 package Example::TicketAuth;
 
-@Example::TicketAuth::ISA = qw(WebService::TicketAuth);
+@Example::TicketAuth::ISA = qw(WebService::TicketAuth::DBI);
 
 use strict;
-use WebService::TicketAuth;
+use WebService::TicketAuth::DBI;
+use Config::Simple;
 
 use vars qw($VERSION %FIELDS);
 our $VERSION = '1.00';
 
+my $config_file = 'service.cfg';
+
 sub new {
     my ($this) = @_;
     my $class = ref($this) || $this;
-    my $self = $class->SUPER::new(@_);
+
+    # Load up config file
+    my %config;
+    if (! Config::Simple->import_from($config_file, \%config)) {
+        die "Could not load config file '$config_file': "
+            . Config::Simple->error() . "\n";
+    }
+
+    my $self = $class->SUPER::new(%config);
 
     return $self;
 }
@@ -30,16 +41,4 @@ sub ticket_duration {
     }
 }
 
-# Override for determining if user is valid
-sub is_valid {
-    my $self = shift;
-    my ($username, $password) = @_;
-
-    if ($username eq 'admin' && $password eq 'admin') {
-        return 1;
-    } elsif ($username eq 'demo' && $password eq 'demo') {
-        return 1;
-    } else {
-        return undef;
-    }
-}
+1;

@@ -1,8 +1,23 @@
 
-* Review/update TicketAuth.pm a bit more
-* Replace the 'something unique' bit in the new() routine of TicketAuth.pm
-* Check into CVS
+* (DONE) Review/update TicketAuth.pm a bit more
 * (DONE) Create example derived class from WebService::TicketAuth
 * (DONE) Create example auth_client.pl
 * (DONE) Create example auth_server.pl
-* 
+* (DONE) Create class WebService::TicketAuth::DBI
+* (DONE) Check into CVS
+
+* Debug TicketAuth/DBI.pm
+* Review/complete TicketAuth/DBI.pm
+* How do I pass $auth to Example::Service?
+* http://johnbokma.com/perl/https.html
+* Change to being a ForkOnAccept daemon
+* Read prior to http://groups.yahoo.com/group/soaplite/messages/3062?viscount=-100
+* Adopt usage of File::Log
+* Add use of a SQL db wrapper to replace _get_dbh(), etc.
+* Create RPM
+
+* Replace the 'something unique' bit in the new() routine of TicketAuth.pm
+* Hook into the SecretTable stuff from Apache::AuthTicket
+* Review http://www.cs.fsu.edu/~engelen/soap.html.
+* Review http://groups.yahoo.com/group/soaplite/message/2963
+* Review http://groups.yahoo.com/group/soaplite/message/4141
