@@ -41,7 +41,7 @@ use strict;
 use Digest::MD5 qw(md5);
 
 use vars qw($VERSION %FIELDS);
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 use fields qw(
               _error_msg
