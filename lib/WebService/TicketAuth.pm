@@ -41,7 +41,7 @@ use strict;
 use Digest::MD5 qw(md5);
 
 use vars qw($VERSION %FIELDS);
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 use fields qw(
               _error_msg
@@ -95,10 +95,10 @@ functions for authentication, to calculate, make, and check the authInfo.
 =cut
 
 sub new {
-    my ($this) = @_;
-    my $class = ref($this) || $this;
-    my $self = bless [\%FIELDS], $class;
-
+    my WebService::TicketAuth $self = shift;
+    if (! ref $self) {
+        $self = fields::new($self);
+    }
     return $self;
 }
 

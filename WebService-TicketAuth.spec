@@ -5,7 +5,7 @@
 %define maketest  1
 name:		  perl-%{pkgname}
 summary:	  %{pkgname} - Ticket-based Authentication for SOAP
-version:	  1.04
+version:	  1.05
 release:	  1
 vendor:		  Open Source Development Labs
 packager:	  Bryce Harrington <bryce@osdl.org>

@@ -24,18 +24,18 @@ use WebService::TicketAuth;
 use DBI;
 
 use vars qw($VERSION %FIELDS);
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 @WebService::TicketAuth::DBI::ISA = qw(WebService::TicketAuth);
 
 use base 'WebService::TicketAuth';
 use fields qw(
               _dbh
-              _authdb_dbi
-              _authdb_user
-              _authdb_pass
-	      _authdb_table
-	      _authdb_user_field
-	      _authdb_passwd_field
+              authdb_dbi
+              authdb_user
+              authdb_pass
+	      authdb_table
+	      authdb_user_field
+	      authdb_passwd_field
               _error_msg
               _debug
               );
@@ -48,31 +48,19 @@ functions for authentication, to calculate, make, and check the authInfo.
 =cut
 
 sub new {
-    my ($this, %args) = @_;
-    my $class = ref($this) || $this;
+    my WebService::TicketAuth::DBI $self = shift;
+    my (%args) = @_;
 
-    foreach my $key (keys %FIELDS) {
-        warn "$key = $FIELDS{$key}\n";
+    if (! ref $self) {
+        $self = fields::new($self);
     }
-
-    my $self = fields::new($class);
     $self->SUPER::new();
 
-    warn "Inside WebService::TicketAuth::new with args:  \n";
     foreach my $field (keys %args) {
-        my $value = $args{$field};
-        warn "$field = $value\n";
-	if (exists $FIELDS{"_$field"} && $field =~ /^authdb/) {
-            warn "Initializing _$field to $value\n";
-	    $self->{"_$field"} = $value;
-	} elsif (! exists $FIELDS{"_$field"}) {
-            warn "_$field did not exist in %FIELDS\n";
-        } else {
-            warn "$field did not match /^authdb/\n";
-        }
+	if (exists $FIELDS{$field} && $field =~ /^authdb/) {
+	    $self->{$field} = $args{$field};
+	}
     }
-
-    warn "Returning self from WebService::TicketAuth::new\n";
 
     return $self;
 }
@@ -87,16 +75,16 @@ caching db handles, for example.
 sub _get_dbh {
     my $self = shift;
 
-    $self->{'_dbh'} = DBI->connect_cached($self->{'_authdb_dbi'},
-                                          $self->{'_authdb_user'},
-                                          $self->{'_authdb_pass'}, 
+    $self->{'_dbh'} = DBI->connect_cached($self->{'authdb_dbi'},
+                                          $self->{'authdb_user'},
+                                          $self->{'authdb_pass'}, 
                                           { RaiseError => 1, AutoCommit => 1 }
                                           );
     if (! defined $self->{'_dbh'}) {
         $self->_set_error("Could not connect to '"
-                          .$self->{'_authdb_dbi'}
+                          .$self->{'authdb_dbi'}
                           ."' as user '"
-                          .$self->{'_authdb_user'}
+                          .$self->{'authdb_user'}
                           ."':  ".$DBI::errstr."\n");
     }
 
@@ -151,9 +139,9 @@ sub is_valid {
     my $self = shift;
     my ($username, $password) = @_;
 
-    my $table        = $self->{'_authdb_table'};
-    my $user_field   = $self->{'_authdb_user_field'};
-    my $passwd_field = $self->{'_authdb_passwd_field'};
+    my $table        = $self->{'authdb_table'};
+    my $user_field   = $self->{'authdb_user_field'};
+    my $passwd_field = $self->{'authdb_passwd_field'};
     my $saved_pass;
 
     my $dbh = $self->_get_dbh();
@@ -169,12 +157,14 @@ sub is_valid {
         FROM   $table
         WHERE  $user_field = ?
         |;
-    eval {
-        my $sth = $dbh->prepare($sql);
-        $sth->execute($username);
-        ($saved_pass) = $sth->getchrow_array;
-	$sth->finish;
-    };
+    my $sth = $dbh->prepare($sql);
+    $sth->execute($username);
+    ($saved_pass) = $sth->fetchrow_array;
+    $sth->finish;
+    
+    if (! $saved_pass) {
+        return undef;
+    }
 
     my $test_pass = crypt($password, $saved_pass);
 

@@ -1,5 +1,9 @@
 Revision history for WebService::TicketAuth
 
+1.05  Jan 7, 2005  Bryce Harrington
+	- Re-fixing inheritance behavior.  I'll get it figured out one of
+	  these days...
+	
 1.04  Jan 5, 2005  Bryce Harrington
 	- Fixed inheritance behavior & added login() accessor funciton
 	- Documenting how to use SSL with login
