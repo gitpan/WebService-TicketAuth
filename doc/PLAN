@@ -1,0 +1,8 @@
+
+* Review/update TicketAuth.pm a bit more
+* Replace the 'something unique' bit in the new() routine of TicketAuth.pm
+* Check into CVS
+* (DONE) Create example derived class from WebService::TicketAuth
+* (DONE) Create example auth_client.pl
+* (DONE) Create example auth_server.pl
+* 

@@ -1,0 +1,29 @@
+This example directory shows a skeleton of how to use
+WebService::TicketAuth in a SOAP::Lite daemon architecture.
+
+To use this, install the following pre-req's on the server:
+
+   * SOAP::Lite
+   * WebService::TicketAuth
+   * Digest::MD5
+
+
+On the client, install the following pre-req's:
+   * Pod::Usage
+   * Getopt::Long
+   * Soap::Lite
+   * Data::Dumper
+   * Storable
+   * Term::ReadKey
+
+
+Then run the server:
+
+   $ ./auth_server.pl
+
+And run the client like this:
+
+   $ ./login.pl admin
+   Password:   [admin]
+
+   $ ./auth_client.pl

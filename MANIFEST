@@ -1,0 +1,17 @@
+ChangeLog
+INSTALL
+MANIFEST
+META.yml
+Makefile.PL
+README
+WebService-TicketAuth.spec
+doc/NOTE
+doc/PLAN
+examples/Example/Service.pm
+examples/Example/TicketAuth.pm
+examples/README
+examples/auth_client.pl
+examples/auth_server.pl
+examples/login.pl
+lib/WebService/TicketAuth.pm
+t/00_initialize.t
