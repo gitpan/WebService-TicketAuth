@@ -19,15 +19,15 @@ style password comparison (compatible with the UNIX crypt() call).
 
 package WebService::TicketAuth::DBI;
 
-# we will need to manage Header information to get a ticket
-@WebService::TicketAuth::DBI::ISA = qw(WebService::TicketAuth);
-
 use strict;
+use WebService::TicketAuth;
 use DBI;
 
 use vars qw($VERSION %FIELDS);
-our $VERSION = '1.00';
+our $VERSION = '1.04';
+@WebService::TicketAuth::DBI::ISA = qw(WebService::TicketAuth);
 
+use base 'WebService::TicketAuth';
 use fields qw(
               _dbh
               _authdb_dbi
@@ -50,28 +50,31 @@ functions for authentication, to calculate, make, and check the authInfo.
 sub new {
     my ($this, %args) = @_;
     my $class = ref($this) || $this;
-    my $self = bless [\%FIELDS], $class;
 
-    while (my ($field, $value) = each %args) {
-	if (exists $FIELDS{"_$field"} && $field =~ /^authdb/) {
-	    $self->{"_$field"} = $value;
-	}
+    foreach my $key (keys %FIELDS) {
+        warn "$key = $FIELDS{$key}\n";
     }
+
+    my $self = fields::new($class);
+    $self->SUPER::new();
+
+    warn "Inside WebService::TicketAuth::new with args:  \n";
+    foreach my $field (keys %args) {
+        my $value = $args{$field};
+        warn "$field = $value\n";
+	if (exists $FIELDS{"_$field"} && $field =~ /^authdb/) {
+            warn "Initializing _$field to $value\n";
+	    $self->{"_$field"} = $value;
+	} elsif (! exists $FIELDS{"_$field"}) {
+            warn "_$field did not exist in %FIELDS\n";
+        } else {
+            warn "$field did not match /^authdb/\n";
+        }
+    }
+
+    warn "Returning self from WebService::TicketAuth::new\n";
 
     return $self;
-}
-
-=head2 DESTROY
-
-Destructor - disconnects from the database (if connected)
-
-=cut
-
-DESTROY { 
-    my $self = shift; 
-    if (defined $self->{_dbh}) {
-	$self->{_dbh}->disconnect();
-    }
 }
 
 =head2 _get_dbh
@@ -83,19 +86,18 @@ caching db handles, for example.
 
 sub _get_dbh {
     my $self = shift;
-    if (! $self->{'_dbh'}) {
-        $self->{'_dbh'} = DBI->connect($self->{'_authdb_dbi'},
-				       $self->{'_authdb_user'},
-				       $self->{'_authdb_pass'}, 
-				       { RaiseError => 1, AutoCommit => 1 }
-				       );
-        if (! defined $self->{'_dbh'}) {
-            $self->_set_error("Could not connect to '"
-                              .$self->{'_authdb_dbi'}
-                              ."' as user '"
-                              .$self->{'_authdb_user'}
-                              ."':  ".$DBI::errstr."\n");
-        }
+
+    $self->{'_dbh'} = DBI->connect_cached($self->{'_authdb_dbi'},
+                                          $self->{'_authdb_user'},
+                                          $self->{'_authdb_pass'}, 
+                                          { RaiseError => 1, AutoCommit => 1 }
+                                          );
+    if (! defined $self->{'_dbh'}) {
+        $self->_set_error("Could not connect to '"
+                          .$self->{'_authdb_dbi'}
+                          ."' as user '"
+                          .$self->{'_authdb_user'}
+                          ."':  ".$DBI::errstr."\n");
     }
 
     return $self->{'_dbh'};
@@ -121,7 +123,10 @@ sub get_error {
     return $self->{'_error_msg'};
 }
 
-
+sub login {
+    my $self = shift;
+    return $self->SUPER::login(@_);
+}
 
 =head2 ticket_duration
 
@@ -171,7 +176,6 @@ sub is_valid {
 	$sth->finish;
     };
 
-    warn "Testing $password against $saved_pass\n";
     my $test_pass = crypt($password, $saved_pass);
 
     return ($test_pass eq $saved_pass);

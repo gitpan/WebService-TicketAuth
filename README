@@ -16,4 +16,22 @@ of either the GNU General Public License or the Artistic License,
 as specified in the Perl README file.
 
 
+SSL:
 
+To add SSL support to your ticket authentication, add something like
+this to your daemon:
+
+my $opt_ssl = 1;
+
+if ($opt_ssl) {
+    $args{'SSL_key_file'} = $opt_ssl_key_file;
+    $args{'SSL_cert_file'} = $opt_ssl_cert_file;
+}
+
+my $daemon = SOAP::Transport::HTTP::Daemon
+    -> new ( %args )
+    -> dispatch_to('WebService::MySystem')
+    ;
+
+For more info about certificates, see
+http://www.sendmail.org/~ca/email/other/cagreg.html 

@@ -5,7 +5,7 @@
 %define maketest  1
 name:		  perl-%{pkgname}
 summary:	  %{pkgname} - Ticket-based Authentication for SOAP
-version:	  1.02
+version:	  1.04
 release:	  1
 vendor:		  Open Source Development Labs
 packager:	  Bryce Harrington <bryce@osdl.org>
@@ -46,7 +46,6 @@ rm -f Makefile
 
 %install
 [ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
-
 mkdir -p $RPM_BUILD_ROOT/usr
 %{makeinstall} `%{__perl} -MExtUtils::MakeMaker -e ' print \$ExtUtils::MakeMaker::VERSION <= 6.05 ? qq|PREFIX=%{buildroot}%{_prefix}| : qq|DESTDIR=%{buildroot}| '`
 [ -x /usr/lib/rpm/brp-compress ] && /usr/lib/rpm/brp-compress
@@ -86,7 +85,6 @@ sub wanted {
     for qw|/etc %_prefix/man %_prefix/bin %_prefix/share|;
     $dirs[@dirs] = $_;
 }
-
 sub indirs {
     my $x = shift;
     $x =~ /^\Q$_\E\// && $x ne $_ && return 1 for @dirs;

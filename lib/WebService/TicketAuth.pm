@@ -41,7 +41,7 @@ use strict;
 use Digest::MD5 qw(md5);
 
 use vars qw($VERSION %FIELDS);
-our $VERSION = '1.02';
+our $VERSION = '1.04';
 
 use fields qw(
               _error_msg
@@ -191,10 +191,6 @@ sub login {
     my $self = shift;
 
     pop;  # Last parameter is the SOAP envelope - we ignore it
-    if (@_ != 2) {
-        $self->_set_error("Invalid parameters to login()");
-        return undef;
-    }
     my ($username, $password) = @_;
 
     # Check credentials

@@ -8,8 +8,6 @@ WebService-TicketAuth.spec
 doc/NOTE
 doc/PLAN
 examples/README
-examples/basic/Example/Service.pm
-examples/basic/Example/TicketAuth.pm
 examples/basic/README
 examples/basic/auth_client.pl
 examples/basic/auth_server.pl
